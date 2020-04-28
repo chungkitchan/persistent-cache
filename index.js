@@ -2,6 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var mkdirp = require('mkdirp-no-bin');
 var rmdir = require('rmdir');
+var rmdirSync = require('rmdir-sync');
 
 function exists(dir) {
     try {
@@ -157,8 +158,20 @@ function cache(options) {
         safeCb(cb)(null);
     }
 
+    function unlinkSync() {
+        if(persist) 
+            rmdirSync(cacheDir);
+    }
+
     function transformFileNameToKey(fileName) {
         return fileName.slice(0, -5);
+    }
+    
+    function has(key) {
+        if (ram && !persist) {
+            return memoryCache.hasOwnProperty(key);
+        }
+        return fs.existsSync(buildFilePath(name));
     }
 
     function keys(cb) {
@@ -192,7 +205,10 @@ function cache(options) {
 
         keys: keys,
         keysSync: keysSync,
-
+        
+        has: has,
+        
+        unlinkSync: unlinkSync,
         unlink: unlink
     };
 }
