@@ -171,7 +171,7 @@ function cache(options) {
         if (ram && !persist) {
             return memoryCache.hasOwnProperty(key);
         }
-        return fs.existsSync(buildFilePath(name));
+        return fs.existsSync(buildFilePath(key));
     }
 
     function keys(cb) {
